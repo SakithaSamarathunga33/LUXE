@@ -41,7 +41,7 @@ export function Hero({ variant = "dark" }: HeroProps) {
   const ent = (i: number) => ({
     initial: { opacity: 0, y: 30 },
     animate: { opacity: 1, y: 0 },
-    transition: { delay: reduced ? 0 : 0.2 + i * 0.13, duration: 0.9, ease: "easeOut" },
+    transition: { delay: reduced ? 0 : 0.2 + i * 0.13, duration: 0.9, ease: "easeOut" as const },
   })
 
   /* ── SPLIT ─────────────────────────────────────────────── */
