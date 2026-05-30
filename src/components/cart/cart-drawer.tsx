@@ -22,7 +22,7 @@ export function CartDrawer({ open, onClose }: CartDrawerProps) {
 
   return (
     <Sheet open={open} onOpenChange={(o) => !o && onClose()}>
-      <SheetContent side="right" className="w-full sm:w-[420px] flex flex-col p-0 bg-luxe-bg border-l border-luxe-line">
+      <SheetContent side="right" showCloseButton={false} className="w-full sm:w-[420px] flex flex-col p-0 bg-luxe-bg border-l border-luxe-line">
         <SheetHeader className="px-6 pt-6 pb-0">
           <div className="flex justify-between items-center">
             <SheetTitle className="font-serif text-[22px] font-normal">
@@ -107,7 +107,8 @@ export function CartDrawer({ open, onClose }: CartDrawerProps) {
               </div>
               <ShimmerButton
                 background="#C9A96E"
-                shimmerColor="rgba(255,255,255,0.5)"
+                shimmerColor="rgba(255,255,255,0.95)"
+                shimmerSize="2px"
                 className="w-full h-12 font-mono text-xs tracking-widest text-luxe-ink"
               >
                 CHECKOUT · {money(cartTotal)}

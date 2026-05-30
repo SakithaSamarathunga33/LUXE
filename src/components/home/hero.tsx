@@ -47,7 +47,7 @@ export function Hero({ variant = "dark" }: HeroProps) {
             Considered tailoring and elevated essentials, made to be lived in.
           </p>
           <div data-hero className="flex gap-3.5 flex-wrap">
-            <ShimmerButton background="#C9A96E" shimmerColor="rgba(255,255,255,0.5)"
+            <ShimmerButton background="#C9A96E" shimmerColor="rgba(255,255,255,0.95)" shimmerSize="2px"
               className="px-8 py-3.5 font-mono text-xs tracking-widest text-luxe-ink">
               <Link href="/shop?filter=new">SHOP NEW ARRIVALS</Link>
             </ShimmerButton>
@@ -77,7 +77,7 @@ export function Hero({ variant = "dark" }: HeroProps) {
         </div>
         <p data-hero className="font-serif italic text-xl text-[#555]">Made for the modern wardrobe.</p>
         <div data-hero className="mt-8">
-          <ShimmerButton background="#C9A96E" shimmerColor="rgba(255,255,255,0.5)"
+          <ShimmerButton background="#C9A96E" shimmerColor="rgba(255,255,255,0.95)" shimmerSize="2px"
             className="px-8 py-3.5 font-mono text-xs tracking-widest text-luxe-ink">
             <Link href="/shop?filter=new">SHOP NEW ARRIVALS</Link>
           </ShimmerButton>
@@ -109,7 +109,7 @@ export function Hero({ variant = "dark" }: HeroProps) {
           The new arrivals collection — refined silhouettes, honest fabrics, made to last beyond the season.
         </p>
         <div data-hero className="flex gap-3.5 flex-wrap">
-          <ShimmerButton background="#C9A96E" shimmerColor="rgba(255,255,255,0.5)"
+          <ShimmerButton background="#C9A96E" shimmerColor="rgba(255,255,255,0.95)" shimmerSize="2px"
             className="px-8 py-3.5 font-mono text-xs tracking-widest text-luxe-ink">
             <Link href="/shop?filter=new">SHOP NEW ARRIVALS</Link>
           </ShimmerButton>
