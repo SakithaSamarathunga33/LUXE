@@ -1,4 +1,7 @@
+"use client"
+
 import Link from "next/link"
+import { motion } from "framer-motion"
 
 const COLS = [
   { h: "Shop",  links: [{ l: "New Arrivals", href: "/shop?filter=new" }, { l: "Women", href: "/shop?category=Women" }, { l: "Men", href: "/shop?category=Men" }, { l: "Accessories", href: "/shop?category=Accessories" }, { l: "Sale", href: "/shop?filter=sale" }] },
@@ -6,13 +9,27 @@ const COLS = [
   { h: "About", links: [{ l: "Our Story", href: "#" }, { l: "Sustainability", href: "#" }, { l: "Stores", href: "#" }, { l: "Careers", href: "#" }, { l: "Press", href: "#" }] },
 ]
 
+const col = {
+  hidden: { opacity: 0, y: 28 },
+  show: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, delay: i * 0.1, ease: [0.25, 0.1, 0.25, 1] as const },
+  }),
+}
+
 export function Footer() {
   return (
     <footer className="bg-luxe-paper border-t border-luxe-line">
       <div className="max-w-[1280px] mx-auto px-6 md:px-10 pt-[72px]">
         <div className="grid grid-cols-2 md:grid-cols-[1.6fr_repeat(3,1fr)] gap-10 pb-14">
+
           {/* Brand */}
-          <div className="col-span-2 md:col-span-1">
+          <motion.div
+            className="col-span-2 md:col-span-1"
+            variants={col} custom={0} initial="hidden"
+            whileInView="show" viewport={{ once: true, amount: 0.2 }}
+          >
             <div className="font-serif text-[30px] tracking-[.22em] pl-[.22em]">LUXE</div>
             <p className="text-luxe-muted text-sm max-w-[280px] mt-4">
               Considered clothing for the modern wardrobe. Designed in studio, made to last.
@@ -28,13 +45,18 @@ export function Footer() {
                 <svg width={17} height={17} viewBox="0 0 24 24" fill="currentColor"><path d="M16 4c.4 2 1.7 3.5 3.8 3.8v2.6a6.4 6.4 0 0 1-3.8-1.3v5.6A5.2 5.2 0 1 1 11 9.5v2.8a2.5 2.5 0 1 0 2.4 2.5V4H16Z"/></svg>
               </a>
             </div>
-          </div>
+          </motion.div>
+
           {/* Link columns */}
-          {COLS.map((col) => (
-            <div key={col.h}>
-              <div className="eyebrow mb-4">{col.h}</div>
+          {COLS.map((c, i) => (
+            <motion.div
+              key={c.h}
+              variants={col} custom={i + 1} initial="hidden"
+              whileInView="show" viewport={{ once: true, amount: 0.2 }}
+            >
+              <div className="eyebrow mb-4">{c.h}</div>
               <ul className="flex flex-col gap-3">
-                {col.links.map((item) => (
+                {c.links.map((item) => (
                   <li key={item.l}>
                     <Link href={item.href} className="text-sm text-luxe-muted hover:text-luxe-ink transition-colors">
                       {item.l}
@@ -42,10 +64,17 @@ export function Footer() {
                   </li>
                 ))}
               </ul>
-            </div>
+            </motion.div>
           ))}
         </div>
-        <div className="flex flex-wrap justify-between items-center gap-5 py-6 border-t border-luxe-line">
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7, delay: 0.35 }}
+          className="flex flex-wrap justify-between items-center gap-5 py-6 border-t border-luxe-line"
+        >
           <span className="font-mono text-[11px] text-luxe-muted tracking-[.05em]">
             © 2026 LUXE — All rights reserved.
           </span>
@@ -56,7 +85,7 @@ export function Footer() {
               </span>
             ))}
           </div>
-        </div>
+        </motion.div>
       </div>
     </footer>
   )

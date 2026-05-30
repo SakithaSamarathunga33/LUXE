@@ -2,9 +2,19 @@
 
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
+import { motion } from "framer-motion"
 import { BlurFade } from "@/components/magicui/blur-fade"
 import { Photo } from "@/components/shared/photo"
 import { CATEGORIES } from "@/data/products"
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 50 },
+  show: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.75, delay: i * 0.15, ease: [0.25, 0.1, 0.25, 1] as const },
+  }),
+}
 
 export function CategoryGrid() {
   return (
@@ -23,7 +33,14 @@ export function CategoryGrid() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {CATEGORIES.map((cat, i) => (
-          <BlurFade key={cat.key} delay={i * 0.1} inView>
+          <motion.div
+            key={cat.key}
+            variants={cardVariants}
+            custom={i}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.1 }}
+          >
             <Link
               href={`/shop?category=${cat.key}`}
               className="relative block h-[420px] md:h-[480px] overflow-hidden group"
@@ -42,7 +59,7 @@ export function CategoryGrid() {
                 </div>
               </div>
             </Link>
-          </BlurFade>
+          </motion.div>
         ))}
       </div>
     </section>
