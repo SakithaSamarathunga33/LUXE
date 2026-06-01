@@ -1,167 +1,198 @@
 "use client"
 
-import { useRef } from "react"
+import { useRef, useState } from "react"
 import Link from "next/link"
-import { motion, useReducedMotion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import { useGSAP } from "@gsap/react"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { AnimatedGradientText } from "@/components/magicui/animated-gradient-text"
 import { ShimmerButton } from "@/components/magicui/shimmer-button"
-import { Photo } from "@/components/shared/photo"
 
 gsap.registerPlugin(ScrollTrigger)
 
-const U = (id: string, w = 1600) =>
-  `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=80`
-
-interface HeroProps {
-  variant?: "dark" | "split" | "editorial"
+type Look = {
+  src: string
+  name: string
+  cat: string
+  no: string
+  href: string
+  pos: string // object-position — keeps the subject framed on narrow screens
 }
 
-export function Hero({ variant = "dark" }: HeroProps) {
+const LOOKS: Look[] = [
+  { src: "/images/hero-main.png", name: "Ember Silk", cat: "Eveningwear", no: "01", href: "/shop?category=Women", pos: "78% 50%" },
+  { src: "/images/hero-aside.png", name: "Desert Trench", cat: "Outerwear", no: "02", href: "/shop?category=Women", pos: "60% 50%" },
+  { src: "/images/look-01.png", name: "Tailored Noir", cat: "Menswear", no: "03", href: "/shop?category=Men", pos: "72% 50%" },
+]
+
+const N = LOOKS.length
+
+export function Hero() {
   const sectionRef = useRef<HTMLElement>(null)
-  const imgRef = useRef<HTMLDivElement>(null)
-  const reduced = useReducedMotion()
+  const layers = useRef<(HTMLDivElement | null)[]>([])
+  const barRef = useRef<HTMLDivElement>(null)
+  const [active, setActive] = useState(0)
 
-  useGSAP(() => {
-    if (reduced || !imgRef.current || !sectionRef.current) return
-    gsap.to(imgRef.current, {
-      yPercent: 28,
-      ease: "none",
-      scrollTrigger: {
-        trigger: sectionRef.current,
+  useGSAP(
+    () => {
+      const section = sectionRef.current
+      const els = layers.current.filter(Boolean) as HTMLDivElement[]
+      if (!section || els.length !== N) return
+
+      // Crossfade full-bleed backgrounds across scroll progress 0→1
+      const render = (p: number) => {
+        const pos = p * (N - 1)
+        els.forEach((el, i) => {
+          const d = Math.abs(i - pos)
+          gsap.set(el, {
+            opacity: Math.max(0, 1 - d),
+            scale: 1 + Math.min(d, 1) * 0.09, // incoming image eases out of a slow zoom
+            zIndex: i,
+          })
+        })
+        const idx = Math.round(pos)
+        setActive((prev) => (prev === idx ? prev : idx))
+        if (barRef.current) barRef.current.style.transform = `scaleX(${p})`
+      }
+
+      render(0)
+
+      ScrollTrigger.create({
+        trigger: section,
         start: "top top",
-        end: "bottom top",
-        scrub: true,
-      },
-    })
-  }, { scope: sectionRef, dependencies: [variant, reduced] })
+        end: "bottom bottom",
+        onUpdate: (self) => render(self.progress),
+        onRefresh: (self) => render(self.progress),
+        invalidateOnRefresh: true,
+      })
+    },
+    { scope: sectionRef },
+  )
 
-  const ent = (i: number) => ({
-    initial: { opacity: 0, y: 30 },
-    animate: { opacity: 1, y: 0 },
-    transition: { delay: reduced ? 0 : 0.2 + i * 0.13, duration: 0.9, ease: "easeOut" as const },
-  })
-
-  /* ── SPLIT ─────────────────────────────────────────────── */
-  if (variant === "split") {
-    return (
-      <section
-        ref={sectionRef}
-        className="grid min-h-screen"
-        style={{ gridTemplateColumns: "1.05fr 1fr", paddingTop: 0, marginTop: "calc(-1 * var(--nav-h))" }}
-      >
-        <div className="relative bg-[#ece6dc] overflow-hidden">
-          <div ref={imgRef} className="absolute inset-x-0 -top-[15%] bottom-0 will-change-transform">
-            <Photo src={U("1483985988355-763728e1935b", 1300)} eager className="absolute inset-0 w-full h-full" />
-          </div>
-        </div>
-        <div className="flex flex-col justify-center px-[8vw] py-[120px]">
-          <motion.div {...ent(0)} className="eyebrow mb-6">Spring / Summer 2026</motion.div>
-          <motion.h1 {...ent(1)} className="font-serif text-[clamp(44px,5.2vw,84px)] leading-[1.05]">
-            The Quiet <br />
-            <AnimatedGradientText>Luxury</AnimatedGradientText> Edit
-          </motion.h1>
-          <motion.p {...ent(2)} className="text-luxe-muted text-[17px] mt-6 mb-9 max-w-[420px]">
-            Considered tailoring and elevated essentials, made to be lived in.
-          </motion.p>
-          <motion.div {...ent(3)} className="flex gap-3.5 flex-wrap">
-            <ShimmerButton background="#C9A96E" shimmerColor="rgba(255,255,255,0.95)" shimmerSize="2px"
-              className="px-8 py-3.5 font-mono text-xs tracking-widest text-luxe-ink">
-              <Link href="/shop?filter=new">SHOP NEW ARRIVALS</Link>
-            </ShimmerButton>
-            <Link href="/shop?category=Women"
-              className="px-8 py-3.5 border border-luxe-line font-mono text-xs tracking-widest hover:bg-luxe-paper transition-colors">
-              EXPLORE WOMEN
-            </Link>
-          </motion.div>
-        </div>
-      </section>
-    )
-  }
-
-  /* ── EDITORIAL ──────────────────────────────────────────── */
-  if (variant === "editorial") {
-    return (
-      <section
-        ref={sectionRef}
-        className="min-h-screen flex flex-col items-center justify-center text-center relative px-6 py-[120px]"
-        style={{ background: "linear-gradient(180deg,#F2EEE7,#F9F7F4)", marginTop: "calc(-1 * var(--nav-h))", paddingTop: "calc(120px + var(--nav-h))" }}
-      >
-        <motion.div {...ent(0)} className="eyebrow mb-7">· New Collection ·</motion.div>
-        <motion.h1 {...ent(1)} className="font-serif text-[clamp(52px,9vw,150px)] leading-none tracking-[-0.02em]">
-          <AnimatedGradientText>LUXE</AnimatedGradientText>
-        </motion.h1>
-        <motion.div {...ent(2)} className="w-[480px] max-w-[80vw] h-[300px] mx-auto my-9 relative">
-          <Photo src={U("1539109136881-3be0616acf4b", 1100)} eager
-            className="absolute inset-0 w-full h-full rounded-[260px_260px_0_0] overflow-hidden" />
-        </motion.div>
-        <motion.p {...ent(3)} className="font-serif italic text-xl text-[#555]">Made for the modern wardrobe.</motion.p>
-        <motion.div {...ent(4)} className="mt-8">
-          <ShimmerButton background="#C9A96E" shimmerColor="rgba(255,255,255,0.95)" shimmerSize="2px"
-            className="px-8 py-3.5 font-mono text-xs tracking-widest text-luxe-ink">
-            <Link href="/shop?filter=new">SHOP NEW ARRIVALS</Link>
-          </ShimmerButton>
-        </motion.div>
-      </section>
-    )
-  }
-
-  /* ── DARK (default) ─────────────────────────────────────── */
+  /* ── Pinned full-bleed background gallery ───────────────── */
   return (
     <section
       ref={sectionRef}
-      className="relative flex items-end overflow-hidden bg-[#17120d]"
-      style={{ height: "100vh", minHeight: 640, marginTop: "calc(-1 * var(--nav-h))" }}
+      style={{ height: `${N * 90}vh`, marginTop: "calc(-1 * var(--nav-h))" }}
+      className="relative"
     >
-      {/* Parallax layer — extra height so parallax movement doesn't show edges */}
-      <div ref={imgRef} className="absolute inset-x-0 -top-[15%] bottom-0 will-change-transform">
-        <Photo src={U("1490481651871-ab68de25d43d")} eager dark className="absolute inset-0 w-full h-full" />
-      </div>
-
-      <div className="absolute inset-0 bg-gradient-to-b from-[rgba(13,13,13,.28)] via-[rgba(13,13,13,.12)] to-[rgba(13,13,13,.72)]" />
-
-      <div className="relative max-w-[1280px] mx-auto px-6 md:px-10 w-full pb-[9vh] text-white">
-        <motion.div {...ent(0)} className="font-mono text-[10.5px] tracking-[.2em] uppercase text-white/78 mb-5">
-          Spring / Summer 2026
+      <div className="sticky top-0 h-screen w-full overflow-hidden bg-[#17120d]">
+        {/* Stacked background images — opening zoom + fade on load */}
+        <motion.div
+          className="absolute inset-0"
+          initial={{ opacity: 0, scale: 1.08 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
+        >
+          {LOOKS.map((look, i) => (
+            <div
+              key={look.src}
+              ref={(el) => { layers.current[i] = el }}
+              className="absolute inset-0 will-change-[opacity,transform]"
+              style={{ opacity: i === 0 ? 1 : 0 }}
+            >
+              <img
+                src={look.src}
+                alt={look.name}
+                loading="eager"
+                draggable={false}
+                className="absolute inset-0 w-full h-full object-cover"
+                style={{ objectPosition: look.pos }}
+              />
+            </div>
+          ))}
         </motion.div>
 
-        <motion.h1 {...ent(1)} className="font-serif text-[clamp(48px,8vw,128px)] text-white leading-[1.0] max-w-[14ch]">
-          Dressed in{" "}
-          <AnimatedGradientText className="font-serif italic text-[clamp(48px,8vw,128px)]">
-            Confidence
-          </AnimatedGradientText>
-        </motion.h1>
-
-        {/* Gold line — draws left to right after headline appears */}
-        <motion.div
-          className="w-28 h-[3px] bg-luxe-gold my-7"
-          initial={{ scaleX: 0 }}
-          animate={{ scaleX: 1 }}
-          style={{ transformOrigin: "left" }}
-          transition={{ duration: 0.65, delay: reduced ? 0 : 0.9, ease: [0.25, 0.1, 0.25, 1] }}
+        {/* Legibility scrims */}
+        <div
+          aria-hidden
+          className="absolute inset-0 pointer-events-none"
+          style={{ background: "linear-gradient(90deg, rgba(13,11,8,.62) 0%, rgba(13,11,8,.22) 42%, transparent 68%)" }}
+        />
+        <div
+          aria-hidden
+          className="absolute inset-0 pointer-events-none"
+          style={{ background: "linear-gradient(0deg, rgba(13,11,8,.6) 0%, transparent 38%, rgba(13,11,8,.28) 100%)" }}
         />
 
-        <motion.p {...ent(3)} className="max-w-[440px] text-white/85 text-[17px] mb-9">
-          The new arrivals collection — refined silhouettes, honest fabrics, made to last beyond the season.
-        </motion.p>
-
-        <motion.div {...ent(4)} className="flex gap-3.5 flex-wrap">
-          <ShimmerButton background="#C9A96E" shimmerColor="rgba(255,255,255,0.95)" shimmerSize="2px"
-            className="px-8 py-3.5 font-mono text-xs tracking-widest text-luxe-ink">
-            <Link href="/shop?filter=new">SHOP NEW ARRIVALS</Link>
-          </ShimmerButton>
-          <Link href="/shop?category=Women"
-            className="px-8 py-3.5 bg-white/12 backdrop-blur-sm border border-white/30 font-mono text-xs tracking-widest text-white hover:bg-white/20 transition-colors">
-            EXPLORE COLLECTION
-          </Link>
+        {/* ── Foreground UI ───────────────────────────────── */}
+        {/* Top-left label */}
+        <motion.div
+          className="absolute left-7 md:left-[6vw] z-30 font-mono text-[10.5px] tracking-[.2em] uppercase text-white/75"
+          style={{ top: "calc(var(--nav-h) + 28px)" }}
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+        >
+          Spring / Summer 2026 — The Lookbook
         </motion.div>
-      </div>
 
-      <div className="absolute bottom-7 right-10 text-white/60 flex-col items-center gap-2 hidden md:flex">
-        <span className="font-mono text-[10px] tracking-[.3em] [writing-mode:vertical-rl]">SCROLL</span>
-        <span className="w-px h-[46px] bg-white/40" />
+        {/* Headline */}
+        <motion.h1
+          className="absolute left-7 md:left-[6vw] z-30 font-serif leading-[0.95] tracking-[-0.02em] text-white max-w-[14ch]"
+          style={{ top: "calc(var(--nav-h) + 64px)", fontSize: "clamp(44px,7vw,118px)" }}
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.35, duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+        >
+          The Art of <AnimatedGradientText className="font-serif italic">Movement</AnimatedGradientText>
+        </motion.h1>
+
+        {/* Bottom-left dynamic caption + CTA */}
+        <div className="absolute left-7 md:left-[6vw] bottom-24 md:bottom-14 z-30 max-w-[80vw]">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={active}
+              initial={{ opacity: 0, y: 22 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -18 }}
+              transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <div className="font-mono text-[10px] tracking-[0.3em] text-white/70 mb-2">
+                {LOOKS[active].cat.toUpperCase()}
+              </div>
+              <div className="font-serif text-[clamp(30px,4.4vw,56px)] leading-none text-white mb-5">
+                {LOOKS[active].name}
+              </div>
+              <ShimmerButton
+                background="#C9A96E"
+                shimmerColor="rgba(255,255,255,0.95)"
+                shimmerSize="2px"
+                className="px-7 py-3 font-mono text-[11px] tracking-widest text-luxe-ink"
+              >
+                <Link href={LOOKS[active].href}>SHOP THE LOOK</Link>
+              </ShimmerButton>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* Bottom-right progress */}
+        <div className="absolute right-7 md:right-[6vw] bottom-24 md:bottom-14 z-30 flex flex-col items-end gap-3">
+          <div className="font-serif text-[clamp(28px,3.4vw,46px)] leading-none text-white/90">
+            {LOOKS[active].no}
+            <span className="text-white/45 text-[0.6em] align-top"> / 0{N}</span>
+          </div>
+          <div className="w-[120px] md:w-[180px] h-px bg-white/25 overflow-hidden">
+            <div ref={barRef} className="h-full w-full bg-luxe-gold origin-left" style={{ transform: "scaleX(0)" }} />
+          </div>
+        </div>
+
+        {/* Scroll hint — fades once you start */}
+        <AnimatePresence>
+          {active === 0 && (
+            <motion.div
+              className="absolute left-1/2 -translate-x-1/2 bottom-7 z-30 hidden md:flex flex-col items-center gap-2 text-white/65"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ delay: 1, duration: 0.8 }}
+            >
+              <span className="font-mono text-[9px] tracking-[.3em]">SCROLL TO EXPLORE</span>
+              <span className="w-px h-7 bg-white/40" />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </section>
   )

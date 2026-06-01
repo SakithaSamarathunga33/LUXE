@@ -22,7 +22,7 @@ export default function HomePage() {
 
   return (
     <>
-      <Hero variant="dark" />
+      <Hero />
       <CategoryGrid />
       <NewArrivals onOpen={handleOpen} onQuick={setQuickProduct} />
       <MarqueeBanner />
