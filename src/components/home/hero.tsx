@@ -40,13 +40,20 @@ export function Hero() {
       const els = layers.current.filter(Boolean) as HTMLDivElement[]
       if (!section || els.length !== N) return
 
+      // Smoothstep easing gives each look a longer "hold" and a quicker,
+      // more cinematic blend through the middle of the crossfade.
+      const ease = (d: number) => {
+        const t = Math.min(Math.max(1 - d, 0), 1)
+        return t * t * (3 - 2 * t)
+      }
+
       // Crossfade full-bleed backgrounds across scroll progress 0→1
       const render = (p: number) => {
         const pos = p * (N - 1)
         els.forEach((el, i) => {
           const d = Math.abs(i - pos)
           gsap.set(el, {
-            opacity: Math.max(0, 1 - d),
+            opacity: ease(d),
             scale: 1 + Math.min(d, 1) * 0.09, // incoming image eases out of a slow zoom
             zIndex: i,
           })
@@ -58,14 +65,32 @@ export function Hero() {
 
       render(0)
 
+      // Target progress comes straight from scroll; the rendered progress
+      // eases toward it every tick, giving the pinned gallery a smooth,
+      // slightly trailing follow instead of snapping 1:1 to the scrollbar.
+      const state = { current: 0, target: 0 }
+
       ScrollTrigger.create({
         trigger: section,
         start: "top top",
         end: "bottom bottom",
-        onUpdate: (self) => render(self.progress),
-        onRefresh: (self) => render(self.progress),
+        onUpdate: (self) => { state.target = self.progress },
+        onRefresh: (self) => {
+          state.target = self.progress
+          state.current = self.progress
+          render(self.progress)
+        },
         invalidateOnRefresh: true,
       })
+
+      const tick = () => {
+        const delta = state.target - state.current
+        state.current += Math.abs(delta) < 0.0006 ? delta : delta * 0.14
+        render(state.current)
+      }
+      gsap.ticker.add(tick)
+
+      return () => gsap.ticker.remove(tick)
     },
     { scope: sectionRef },
   )
@@ -73,6 +98,7 @@ export function Hero() {
   /* ── Pinned full-bleed background gallery ───────────────── */
   return (
     <section
+      id="hero"
       ref={sectionRef}
       style={{ height: `${N * 90}vh`, marginTop: "calc(-1 * var(--nav-h))" }}
       className="relative"

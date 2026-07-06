@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
 import { Search, Heart, ShoppingBag, Menu, X, ArrowRight } from "lucide-react"
 import { useCart } from "@/hooks/use-cart"
 import { useWishlist } from "@/hooks/use-wishlist"
@@ -23,17 +23,33 @@ interface NavbarProps {
 
 export function Navbar({ onCartOpen }: NavbarProps) {
   const router = useRouter()
+  const pathname = usePathname()
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const { cartCount } = useCart()
   const { wishlistCount } = useWishlist()
 
   useEffect(() => {
-    const f = () => setScrolled(window.scrollY > 40)
-    f()
-    window.addEventListener("scroll", f, { passive: true })
-    return () => window.removeEventListener("scroll", f)
-  }, [])
+    // Pages with a full-bleed #hero (the homepage) stay transparent for the
+    // entire hero — the navbar only turns white once the user scrolls into
+    // the section right after it. Other pages fall back to a simple offset.
+    const heroEl = document.getElementById("hero")
+
+    if (!heroEl) {
+      const f = () => setScrolled(window.scrollY > 40)
+      f()
+      window.addEventListener("scroll", f, { passive: true })
+      return () => window.removeEventListener("scroll", f)
+    }
+
+    const navH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--nav-h")) || 68
+    const observer = new IntersectionObserver(
+      ([entry]) => setScrolled(!entry.isIntersecting),
+      { rootMargin: `-${navH}px 0px 0px 0px`, threshold: 0 },
+    )
+    observer.observe(heroEl)
+    return () => observer.disconnect()
+  }, [pathname])
 
   return (
     <>
@@ -41,8 +57,8 @@ export function Navbar({ onCartOpen }: NavbarProps) {
         className={cn(
           "fixed top-0 left-0 right-0 z-50 transition-all duration-400",
           scrolled
-            ? "bg-luxe-bg/85 backdrop-blur-md border-b border-luxe-line"
-            : "bg-transparent border-b border-transparent",
+            ? "bg-luxe-bg/85 backdrop-blur-md border-b border-luxe-line text-luxe-ink"
+            : "bg-transparent border-b border-transparent text-white",
         )}
         style={{ height: "var(--nav-h)" }}
       >
