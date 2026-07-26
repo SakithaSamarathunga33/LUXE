@@ -18,6 +18,7 @@
 
 <p align="center">
   <img src="./src/public/images/image.png" alt="LUXE Fashion Clothing Store" width="100%" />
+  <img src="./public/images/landing.png" alt="LUXE Landing Page" width="100%" />
 </p>
 
 ## Overview
