@@ -17,7 +17,7 @@
 <br />
 
 <p align="center">
-  <img src="./src/public/images/image.png" alt="LUXE Fashion Clothing Store" width="100%" />
+  <img src="./src/public/images/Screenshot 2026-07-26 063938.png" alt="LUXE Fashion Clothing Store" width="100%" />
 </p>
 
 ## Overview
