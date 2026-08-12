@@ -14,6 +14,10 @@
   <img src="https://img.shields.io/badge/gsap-%2388CE02.svg?style=for-the-badge&logo=greensock&logoColor=white" />
 </div>
 
+[**Live Demo**](https://luxe-one-swart.vercel.app) · [Installation](#installation--setup) · [Tech Stack](#technologies)
+
+*Like the aesthetic? A star helps others find it ⭐*
+
 <br />
 
 <p align="center">
@@ -78,8 +82,8 @@ LUXE is a premium fashion e-commerce storefront built with Next.js 16 and React 
 
 ```bash
 # Clone the repository
-git clone https://github.com/SakithaSamarathunga33/FashionClothing-store.git
-cd FashionClothing-store
+git clone https://github.com/SakithaSamarathunga33/LUXE.git
+cd LUXE
 
 # Install dependencies
 npm install
