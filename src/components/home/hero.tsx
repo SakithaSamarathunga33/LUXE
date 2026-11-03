@@ -6,8 +6,6 @@ import { motion, AnimatePresence } from "framer-motion"
 import { useGSAP } from "@gsap/react"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
-import { AnimatedGradientText } from "@/components/magicui/animated-gradient-text"
-import { ShimmerButton } from "@/components/magicui/shimmer-button"
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -103,7 +101,7 @@ export function Hero() {
       style={{ height: `${N * 90}vh`, marginTop: "calc(-1 * var(--nav-h))" }}
       className="relative"
     >
-      <div className="sticky top-0 h-screen w-full overflow-hidden bg-[#17120d]">
+      <div className="sticky top-0 h-screen w-full overflow-hidden bg-background">
         {/* Stacked background images — opening zoom + fade on load */}
         <motion.div
           className="absolute inset-0"
@@ -134,88 +132,93 @@ export function Hero() {
         <div
           aria-hidden
           className="absolute inset-0 pointer-events-none"
-          style={{ background: "linear-gradient(90deg, rgba(13,11,8,.62) 0%, rgba(13,11,8,.22) 42%, transparent 68%)" }}
+          style={{ background: "linear-gradient(90deg, rgb(20 16 24 / .7) 0%, rgb(20 16 24 / .25) 45%, transparent 70%)" }}
         />
         <div
           aria-hidden
           className="absolute inset-0 pointer-events-none"
-          style={{ background: "linear-gradient(0deg, rgba(13,11,8,.6) 0%, transparent 38%, rgba(13,11,8,.28) 100%)" }}
+          style={{ background: "linear-gradient(0deg, rgb(20 16 24 / .85) 0%, transparent 42%, rgb(20 16 24 / .35) 100%)" }}
         />
 
         {/* ── Foreground UI ───────────────────────────────── */}
-        {/* Top-left label */}
-        <motion.div
-          className="absolute left-7 md:left-[6vw] z-30 font-mono text-[10.5px] tracking-[.2em] uppercase text-white/75"
-          style={{ top: "calc(var(--nav-h) + 28px)" }}
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+        <div
+          className="absolute left-5 md:left-[6vw] right-5 z-30 flex flex-col items-start gap-5"
+          style={{ top: "calc(var(--nav-h) + 40px)" }}
         >
-          Spring / Summer 2026 — The Lookbook
-        </motion.div>
+          <motion.span
+            className="chip"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <span className="size-1.5 rounded-full" style={{ background: "var(--silk)" }} />
+            Spring–Summer 2026 lookbook
+          </motion.span>
 
-        {/* Headline */}
-        <motion.h1
-          className="absolute left-7 md:left-[6vw] z-30 font-serif leading-[0.95] tracking-[-0.02em] text-white max-w-[14ch]"
-          style={{ top: "calc(var(--nav-h) + 64px)", fontSize: "clamp(44px,7vw,118px)" }}
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.35, duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-        >
-          The Art of <AnimatedGradientText className="font-serif italic">Movement</AnimatedGradientText>
-        </motion.h1>
+          <motion.h1
+            className="font-display font-bold text-white leading-[0.86] tracking-[-0.05em] max-w-[11ch]"
+            style={{ fontSize: "clamp(52px,9vw,148px)", fontVariationSettings: '"wdth" 78' }}
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.35, duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+          >
+            The art of movement
+          </motion.h1>
+        </div>
 
-        {/* Bottom-left dynamic caption + CTA */}
-        <div className="absolute left-7 md:left-[6vw] bottom-24 md:bottom-14 z-30 max-w-[80vw]">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={active}
-              initial={{ opacity: 0, y: 22 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -18 }}
-              transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <div className="font-mono text-[10px] tracking-[0.3em] text-white/70 mb-2">
-                {LOOKS[active].cat.toUpperCase()}
-              </div>
-              <div className="font-serif text-[clamp(30px,4.4vw,56px)] leading-none text-white mb-5">
-                {LOOKS[active].name}
-              </div>
-              <ShimmerButton
-                background="#C9A96E"
-                shimmerColor="rgba(255,255,255,0.95)"
-                shimmerSize="2px"
-                className="px-7 py-3 font-mono text-[11px] tracking-widest text-luxe-ink"
+        {/* Bottom-left caption card + CTA */}
+        <div className="absolute left-5 md:left-[6vw] bottom-24 md:bottom-12 z-30">
+          <div className="rounded-[28px] border border-white/12 bg-[rgb(20_16_24/0.45)] backdrop-blur-xl p-5 pr-6 md:p-6 md:pr-8 shadow-[inset_0_1px_0_rgb(255_255_255/0.08)]">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={active}
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
               >
-                <Link href={LOOKS[active].href}>SHOP THE LOOK</Link>
-              </ShimmerButton>
-            </motion.div>
-          </AnimatePresence>
+                <div className="text-sm text-white/65">{LOOKS[active].cat}</div>
+                <div className="font-display font-semibold text-[clamp(28px,3.6vw,44px)] leading-none tracking-[-0.03em] text-white mt-1.5 mb-5">
+                  {LOOKS[active].name}
+                </div>
+              </motion.div>
+            </AnimatePresence>
+            <Link href={LOOKS[active].href} className="btn-silk">
+              Shop the look
+            </Link>
+          </div>
         </div>
 
         {/* Bottom-right progress */}
-        <div className="absolute right-7 md:right-[6vw] bottom-24 md:bottom-14 z-30 flex flex-col items-end gap-3">
-          <div className="font-serif text-[clamp(28px,3.4vw,46px)] leading-none text-white/90">
+        <div className="absolute right-5 md:right-[6vw] bottom-24 md:bottom-14 z-30 hidden sm:flex flex-col items-end gap-3">
+          <div className="font-display text-white tabular-nums text-[clamp(26px,3vw,40px)] leading-none tracking-[-0.03em]">
             {LOOKS[active].no}
-            <span className="text-white/45 text-[0.6em] align-top"> / 0{N}</span>
+            <span className="text-white/40 text-[0.55em] align-top ml-1">/ 0{N}</span>
           </div>
-          <div className="w-[120px] md:w-[180px] h-px bg-white/25 overflow-hidden">
-            <div ref={barRef} className="h-full w-full bg-luxe-gold origin-left" style={{ transform: "scaleX(0)" }} />
+          <div className="w-[140px] md:w-[200px] h-1 rounded-full bg-white/15 overflow-hidden">
+            <div ref={barRef} className="h-full w-full rounded-full origin-left" style={{ transform: "scaleX(0)", background: "var(--silk)" }} />
           </div>
         </div>
 
-        {/* Scroll hint — fades once you start */}
+        {/* Scroll hint — a mouse with a travelling wheel; fades once you start */}
         <AnimatePresence>
           {active === 0 && (
             <motion.div
-              className="absolute left-1/2 -translate-x-1/2 bottom-7 z-30 hidden md:flex flex-col items-center gap-2 text-white/65"
+              className="absolute left-1/2 -translate-x-1/2 bottom-8 z-30 hidden md:flex flex-col items-center gap-2 text-white/60 text-xs"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ delay: 1, duration: 0.8 }}
+              aria-hidden
             >
-              <span className="font-mono text-[9px] tracking-[.3em]">SCROLL TO EXPLORE</span>
-              <span className="w-px h-7 bg-white/40" />
+              <span className="w-[22px] h-[34px] rounded-full border-[1.5px] border-white/50 flex justify-center pt-1.5">
+                <motion.span
+                  className="w-1 h-1.5 rounded-full bg-white"
+                  animate={{ y: [0, 9, 0], opacity: [1, 0.2, 1] }}
+                  transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+                />
+              </span>
+              Scroll
             </motion.div>
           )}
         </AnimatePresence>

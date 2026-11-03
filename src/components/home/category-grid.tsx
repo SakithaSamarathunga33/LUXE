@@ -1,40 +1,43 @@
 "use client"
 
 import Link from "next/link"
-import { ArrowRight } from "lucide-react"
+import { ArrowUpRight } from "lucide-react"
 import { motion } from "framer-motion"
 import { BlurFade } from "@/components/magicui/blur-fade"
 import { Photo } from "@/components/shared/photo"
 import { CATEGORIES } from "@/data/products"
+import { cn } from "@/lib/utils"
 
 const cardVariants = {
-  hidden: { opacity: 0, y: 50 },
+  hidden: { opacity: 0, y: 40 },
   show: (i: number) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.75, delay: i * 0.15, ease: [0.25, 0.1, 0.25, 1] as const },
+    transition: { duration: 0.75, delay: i * 0.12, ease: [0.22, 1, 0.36, 1] as const },
   }),
 }
 
 export function CategoryGrid() {
   return (
-    <section className="py-20 max-w-[1280px] mx-auto px-6 md:px-10">
-      <div className="flex items-end justify-between mb-12 flex-wrap gap-5">
-        <div>
-          <BlurFade delay={0}><div className="eyebrow mb-3.5">Shop by Category</div></BlurFade>
-          <BlurFade delay={0.1}><h2 className="font-serif text-[clamp(32px,4vw,52px)]">Find your edit</h2></BlurFade>
-        </div>
-        <BlurFade delay={0.15}>
-          <Link href="/shop" className="font-mono text-[11px] tracking-[.1em] uppercase border-b border-luxe-ink pb-px hover:text-luxe-gold hover:border-luxe-gold transition-colors">
-            View All
-          </Link>
+    <section className="py-24 max-w-[1280px] mx-auto px-5 md:px-10">
+      <div className="flex items-end justify-between mb-10 flex-wrap gap-5">
+        <BlurFade delay={0}>
+          <h2 className="h-section">Find your edit</h2>
+          <p className="text-muted-foreground mt-3 max-w-[42ch]">
+            Three wardrobes, one point of view. Start where you like.
+          </p>
+        </BlurFade>
+        <BlurFade delay={0.1}>
+          <Link href="/shop" className="btn-glass btn-sm">View all</Link>
         </BlurFade>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* Bento: the first category runs the full height, the others stack beside it */}
+      <div className="grid grid-cols-1 md:grid-cols-[1.25fr_1fr] md:grid-rows-2 gap-4 md:h-[640px]">
         {CATEGORIES.map((cat, i) => (
           <motion.div
             key={cat.key}
+            className={cn(i === 0 && "md:row-span-2")}
             variants={cardVariants}
             custom={i}
             initial="hidden"
@@ -43,20 +46,25 @@ export function CategoryGrid() {
           >
             <Link
               href={`/shop?category=${cat.key}`}
-              className="relative block h-[420px] md:h-[480px] overflow-hidden group"
+              className="relative block h-[380px] md:h-full overflow-hidden rounded-[28px] group"
             >
               <Photo
                 src={cat.img}
                 alt={cat.title}
-                className="absolute inset-0 w-full h-full transition-transform duration-700 group-hover:scale-[1.06]"
+                className="absolute inset-0 w-full h-full transition-transform duration-[900ms] ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-[1.05]"
                 eager={i === 0}
               />
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent from-[45%] to-[rgba(13,13,13,.55)]" />
-              <div className="absolute bottom-0 left-0 right-0 p-7 text-white">
-                <div className="font-serif text-3xl">{cat.title}</div>
-                <div className="flex items-center gap-2 mt-2 font-mono text-[11px] tracking-[.1em]">
-                  {cat.count} styles <ArrowRight size={14} />
+              <div className="absolute inset-0 bg-gradient-to-t from-[rgb(20_16_24/0.75)] via-transparent to-transparent" />
+              <div className="absolute inset-x-4 bottom-4 md:inset-x-5 md:bottom-5 flex items-end justify-between gap-4">
+                <div>
+                  <div className="font-display font-semibold text-white text-[clamp(30px,3.4vw,46px)] leading-none tracking-[-0.03em]">
+                    {cat.title}
+                  </div>
+                  <div className="text-sm text-white/70 mt-2">{cat.count} styles</div>
                 </div>
+                <span className="size-12 shrink-0 rounded-full bg-white text-background flex items-center justify-center transition-transform duration-500 group-hover:rotate-45">
+                  <ArrowUpRight size={20} />
+                </span>
               </div>
             </Link>
           </motion.div>

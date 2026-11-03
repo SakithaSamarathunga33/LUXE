@@ -16,11 +16,11 @@ export function Stars({ value = 0, size = 14, showVal = false, count, className 
           const fill = Math.max(0, Math.min(1, value - i)) * 100
           return (
             <span key={i} className="relative" style={{ width: size, height: size }}>
-              <svg width={size} height={size} viewBox="0 0 24 24" fill="#d9d1c4" stroke="none" className="absolute inset-0">
+              <svg width={size} height={size} viewBox="0 0 24 24" fill="rgb(255 255 255 / 0.16)" stroke="none" className="absolute inset-0">
                 <path d="M12 3l2.6 5.6 6.1.8-4.5 4.2 1.2 6L12 17.8 6.6 19.6l1.2-6L3.3 9.4l6.1-.8L12 3Z" />
               </svg>
               <span className="absolute inset-0 overflow-hidden" style={{ width: `${fill}%` }}>
-                <svg width={size} height={size} viewBox="0 0 24 24" fill="#C9A96E" stroke="none">
+                <svg width={size} height={size} viewBox="0 0 24 24" fill="var(--color-orchid)" stroke="none">
                   <path d="M12 3l2.6 5.6 6.1.8-4.5 4.2 1.2 6L12 17.8 6.6 19.6l1.2-6L3.3 9.4l6.1-.8L12 3Z" />
                 </svg>
               </span>
@@ -29,7 +29,7 @@ export function Stars({ value = 0, size = 14, showVal = false, count, className 
         })}
       </span>
       {showVal && (
-        <span className="font-mono text-[11px] text-luxe-muted">
+        <span className="text-xs text-muted-foreground tabular-nums">
           {value.toFixed(1)}{count != null ? ` (${count})` : ""}
         </span>
       )}

@@ -5,7 +5,6 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Ruler, Truck, RefreshCw, Heart } from "lucide-react"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-import { ShimmerButton } from "@/components/magicui/shimmer-button"
 import { BlurFade } from "@/components/magicui/blur-fade"
 import { Photo } from "@/components/shared/photo"
 import { Stars } from "@/components/shared/stars"
@@ -34,14 +33,14 @@ function Gallery({ product }: { product: Product }) {
     <div className="grid grid-cols-[80px_1fr] gap-4 items-start">
       <div className="flex flex-col gap-3">
         {imgs.map((src, i) => (
-          <button key={i} onClick={() => setActive(i)}
-            className={cn("h-[100px] overflow-hidden border transition-all",
-              active === i ? "border-luxe-ink opacity-100" : "border-luxe-line opacity-60 hover:opacity-90")}>
+          <button key={i} type="button" onClick={() => setActive(i)} aria-label={`View image ${i + 1}`} aria-pressed={active === i}
+            className={cn("h-[100px] overflow-hidden rounded-xl border transition-all",
+              active === i ? "border-orchid opacity-100" : "border-border opacity-60 hover:opacity-90")}>
             <Photo src={src} alt="" className="w-full h-full" eager={i === 0} />
           </button>
         ))}
       </div>
-      <div className="relative overflow-hidden bg-[#ece6dc] cursor-zoom-in"
+      <div className="relative overflow-hidden rounded-3xl bg-card cursor-zoom-in"
         style={{ height: 640 }}
         onMouseMove={(e) => {
           const r = e.currentTarget.getBoundingClientRect()
@@ -55,7 +54,7 @@ function Gallery({ product }: { product: Product }) {
             style={{ backgroundImage: `url(${imgs[active]})`, backgroundSize: "200%", backgroundPosition: `${zoom.x}% ${zoom.y}%`, opacity: 0.999 }} />
         )}
         {product.salePrice != null && (
-          <span className="absolute top-4 left-4 font-mono text-[11px] tracking-[.18em] bg-luxe-gold text-luxe-ink px-2.5 py-1.5">SALE</span>
+          <span className="chip chip-sale absolute top-4 left-4">Sale</span>
         )}
       </div>
     </div>
@@ -96,7 +95,7 @@ export function ProductClient({ id }: { id: number }) {
   const addItem = () => {
     if (!size) { toast.error("Please select a size"); return }
     addToCart(product, size, color, qty)
-    toast.success(`${product.name} added to bag`, { description: `${color} · ${size}` })
+    toast.success(`${product.name} added to bag`, { description: `${color}, size ${size}` })
   }
 
   const related = [
@@ -107,43 +106,43 @@ export function ProductClient({ id }: { id: number }) {
   return (
     <div className="min-h-screen">
       <div className="max-w-[1280px] mx-auto px-6 md:px-10 pt-8">
-        <nav className="flex items-center gap-2 font-mono text-[11px] text-luxe-muted tracking-[.05em] mb-7">
-          <Link href="/" className="hover:text-luxe-ink transition-colors">Home</Link>
-          <span>/</span>
-          <Link href={`/shop?category=${product.category}`} className="hover:text-luxe-ink transition-colors">{product.category}</Link>
-          <span>/</span>
-          <span className="text-luxe-ink">{product.name}</span>
+        <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-sm text-muted-foreground mb-7">
+          <Link href="/" className="hover:text-foreground transition-colors">Home</Link>
+          <span aria-hidden="true">/</span>
+          <Link href={`/shop?category=${product.category}`} className="hover:text-foreground transition-colors">{product.category}</Link>
+          <span aria-hidden="true">/</span>
+          <span className="text-foreground">{product.name}</span>
         </nav>
 
         <div className="grid md:grid-cols-[1.15fr_1fr] gap-16 items-start pb-16">
           <Gallery product={product} />
           <div ref={buyRef} className="md:sticky md:top-[calc(var(--nav-h)+24px)]">
-            <div className="eyebrow mb-3">{product.brand}</div>
-            <h1 className="font-serif text-[clamp(28px,3.4vw,46px)] leading-[1.08]">{product.name}</h1>
+            <div className="text-sm text-muted-foreground mb-2">{product.brand}</div>
+            <h1 className="font-display text-[clamp(28px,3.4vw,46px)] font-semibold leading-[1.05] tracking-tight">{product.name}</h1>
             <div className="flex items-center gap-4 mt-4">
               {sale
-                ? <><span className="font-mono text-2xl text-[#B2904E]">{money(product.salePrice!)}</span><span className="font-mono text-lg text-luxe-muted line-through">{money(product.price)}</span><span className="font-mono text-[11px] bg-luxe-gold text-luxe-ink px-2 py-1">-{Math.round((1 - product.salePrice! / product.price) * 100)}%</span></>
-                : <span className="font-mono text-2xl">{money(product.price)}</span>}
+                ? <><span className="text-2xl tabular-nums font-medium text-sale">{money(product.salePrice!)}</span><span className="text-lg tabular-nums text-muted-foreground line-through">{money(product.price)}</span><span className="chip chip-sale tabular-nums">-{Math.round((1 - product.salePrice! / product.price) * 100)}%</span></>
+                : <span className="text-2xl tabular-nums font-medium">{money(product.price)}</span>}
             </div>
             <div className="flex items-center gap-2.5 mt-3.5">
               <Stars value={product.rating} size={15} />
-              <span className="text-sm text-luxe-muted">{product.rating} · {product.reviewCount} reviews</span>
+              <span className="text-sm text-muted-foreground">{product.rating} ({product.reviewCount} reviews)</span>
             </div>
-            <hr className="border-luxe-line my-6" />
+            <hr className="border-border my-6" />
             <div className="flex justify-between items-center">
-              <span className="eyebrow">Color — <span className="text-luxe-ink normal-case tracking-normal">{color}</span></span>
+              <span className="text-sm text-muted-foreground">Color: <span className="text-foreground">{color}</span></span>
             </div>
             <div className="flex gap-3.5 mt-3.5">
               {product.colors.map((c) => (
-                <button key={c} onClick={() => setColor(c)} title={c}
-                  className={cn("w-8 h-8 rounded-full ring-offset-2 transition-all",
-                    color === c ? "ring-2 ring-luxe-ink" : "ring-1 ring-luxe-line")}
+                <button key={c} type="button" onClick={() => setColor(c)} title={c} aria-label={c} aria-pressed={color === c}
+                  className={cn("w-8 h-8 rounded-full ring-offset-2 ring-offset-background transition-all",
+                    color === c ? "ring-2 ring-orchid" : "ring-1 ring-border")}
                   style={{ background: COLORS[c] }} />
               ))}
             </div>
             <div className="flex justify-between items-center mt-6">
-              <span className="eyebrow">Size{size ? ` — ${size}` : ""}</span>
-              <button onClick={() => setSizeOpen(true)} className="flex items-center gap-1.5 text-luxe-muted text-sm hover:text-luxe-ink transition-colors">
+              <span className="text-sm text-muted-foreground">Size{size ? <>: <span className="text-foreground">{size}</span></> : ""}</span>
+              <button type="button" onClick={() => setSizeOpen(true)} className="flex items-center gap-1.5 text-muted-foreground text-sm hover:text-foreground transition-colors">
                 <Ruler size={15} /> Size guide
               </button>
             </div>
@@ -151,9 +150,9 @@ export function ProductClient({ id }: { id: number }) {
               {SIZES.map((s) => {
                 const disabled = DISABLED_SIZES.includes(s)
                 return (
-                  <button key={s} disabled={disabled} onClick={() => setSize(s)}
-                    className={cn("min-w-[52px] h-11 px-3 border font-mono text-[12px] transition-colors",
-                      disabled ? "opacity-30 line-through cursor-not-allowed" : size === s ? "bg-luxe-ink text-white border-luxe-ink" : "border-luxe-line hover:border-luxe-ink")}>
+                  <button key={s} type="button" disabled={disabled} onClick={() => setSize(s)} aria-pressed={size === s}
+                    className={cn("min-w-[52px] h-11 px-4 rounded-full border text-sm transition-colors",
+                      disabled ? "border-border opacity-30 line-through cursor-not-allowed" : size === s ? "bg-primary text-primary-foreground border-primary" : "border-border hover:border-foreground/40")}>
                     {s}
                   </button>
                 )
@@ -161,24 +160,24 @@ export function ProductClient({ id }: { id: number }) {
             </div>
             <div className="flex gap-3.5 mt-8 items-stretch">
               <QtyStepper value={qty} onChange={setQty} className="h-12" />
-              <ShimmerButton background="#C9A96E" shimmerColor="rgba(255,255,255,0.5)" onClick={addItem}
-                className="flex-1 h-12 font-mono text-xs tracking-widest text-luxe-ink">
-                ADD TO CART — {money((sale ? product.salePrice! : product.price) * qty)}
-              </ShimmerButton>
+              <button type="button" onClick={addItem} className="btn-silk flex-1">
+                Add to bag
+                <span className="tabular-nums text-muted-foreground">{money((sale ? product.salePrice! : product.price) * qty)}</span>
+              </button>
             </div>
-            <button onClick={() => toggleWishlist(product.id)}
-              className="w-full h-12 mt-3 border border-luxe-line flex items-center justify-center gap-2.5 font-mono text-xs tracking-widest hover:bg-luxe-paper transition-colors">
-              <Heart size={17} className={wished ? "fill-luxe-ink" : ""} />
-              {wished ? "SAVED TO WISHLIST" : "ADD TO WISHLIST"}
+            <button type="button" onClick={() => toggleWishlist(product.id)} aria-pressed={wished}
+              className="btn-glass btn-block mt-3">
+              <Heart size={17} className={wished ? "fill-sale text-sale" : ""} />
+              {wished ? "Saved to wishlist" : "Add to wishlist"}
             </button>
-            <div className="flex gap-5 mt-5 py-4 border-t border-b border-luxe-line flex-wrap">
-              <span className="flex items-center gap-2 text-[12.5px] text-luxe-muted"><Truck size={17} /> Free shipping over $100</span>
-              <span className="flex items-center gap-2 text-[12.5px] text-luxe-muted"><RefreshCw size={16} /> 30-day returns</span>
+            <div className="flex gap-5 mt-5 py-4 border-t border-b border-border flex-wrap">
+              <span className="flex items-center gap-2 text-[13px] text-muted-foreground"><Truck size={17} /> Free shipping over $100</span>
+              <span className="flex items-center gap-2 text-[13px] text-muted-foreground"><RefreshCw size={16} /> 30-day returns</span>
             </div>
             <Accordion multiple defaultValue={["details"]} className="mt-1">
-              <AccordionItem value="details" className="border-b border-luxe-line">
-                <AccordionTrigger className="text-sm font-normal py-4">Description & Details</AccordionTrigger>
-                <AccordionContent className="text-luxe-muted text-sm leading-relaxed">
+              <AccordionItem value="details" className="border-b border-border">
+                <AccordionTrigger className="text-sm font-medium py-4">Description & Details</AccordionTrigger>
+                <AccordionContent className="text-muted-foreground text-sm leading-relaxed">
                   <p>{product.name} in premium {color.toLowerCase()}. Cut from responsibly-sourced fabric.</p>
                   <ul className="mt-3 space-y-1 list-disc pl-4">
                     <li>Mid-weight, breathable fabrication</li>
@@ -187,15 +186,15 @@ export function ProductClient({ id }: { id: number }) {
                   </ul>
                 </AccordionContent>
               </AccordionItem>
-              <AccordionItem value="shipping" className="border-b border-luxe-line">
-                <AccordionTrigger className="text-sm font-normal py-4">Delivery & Shipping</AccordionTrigger>
-                <AccordionContent className="text-luxe-muted text-sm leading-relaxed">
+              <AccordionItem value="shipping" className="border-b border-border">
+                <AccordionTrigger className="text-sm font-medium py-4">Delivery & Shipping</AccordionTrigger>
+                <AccordionContent className="text-muted-foreground text-sm leading-relaxed">
                   Standard delivery 3–5 business days. Free over $100. Express available at checkout.
                 </AccordionContent>
               </AccordionItem>
-              <AccordionItem value="returns" className="border-b border-luxe-line">
-                <AccordionTrigger className="text-sm font-normal py-4">Returns & Exchanges</AccordionTrigger>
-                <AccordionContent className="text-luxe-muted text-sm leading-relaxed">
+              <AccordionItem value="returns" className="border-b border-border">
+                <AccordionTrigger className="text-sm font-medium py-4">Returns & Exchanges</AccordionTrigger>
+                <AccordionContent className="text-muted-foreground text-sm leading-relaxed">
                   Free 30-day returns on unworn items with tags. Exchanges within 2 business days.
                 </AccordionContent>
               </AccordionItem>
@@ -204,28 +203,28 @@ export function ProductClient({ id }: { id: number }) {
         </div>
 
         {/* Reviews */}
-        <section className="py-16 border-t border-luxe-line">
+        <section className="py-16 border-t border-border">
           <div className="grid md:grid-cols-[300px_1fr] gap-14 items-start">
             <div>
-              <div className="eyebrow mb-4">Reviews</div>
-              <div className="font-serif text-[64px] leading-none">{product.rating}</div>
+              <h2 className="font-display text-2xl font-semibold mb-4">Reviews</h2>
+              <div className="font-display text-[64px] font-semibold leading-none tabular-nums">{product.rating}</div>
               <div className="my-2.5"><Stars value={product.rating} size={18} /></div>
-              <div className="text-luxe-muted text-sm">Based on {product.reviewCount} reviews</div>
-              <button className="mt-5 h-11 px-6 border border-luxe-line font-mono text-[11px] tracking-widest hover:bg-luxe-paper transition-colors">WRITE A REVIEW</button>
+              <div className="text-muted-foreground text-sm">Based on {product.reviewCount} reviews</div>
+              <button type="button" className="btn-glass btn-sm mt-5">Write a review</button>
             </div>
             <div>
               {REVIEWS.map((r, i) => (
                 <BlurFade key={i} delay={i * 0.08} inView>
-                  <div className="py-6 border-b border-luxe-line last:border-0">
+                  <div className="py-6 border-b border-border last:border-0">
                     <div className="flex justify-between items-center mb-2">
                       <Stars value={r.rating} size={14} />
-                      <span className="font-mono text-[11px] text-luxe-muted">{r.date}</span>
+                      <span className="text-xs text-muted-foreground">{r.date}</span>
                     </div>
                     <div className="font-medium text-[15px] mb-2">{r.title}</div>
-                    <p className="text-luxe-muted text-sm">{r.body}</p>
+                    <p className="text-muted-foreground text-sm">{r.body}</p>
                     <div className="flex items-center gap-2 mt-3 text-sm">
-                      <span className="w-7 h-7 rounded-full bg-luxe-paper flex items-center justify-center font-mono text-[11px]">{r.name[0]}</span>
-                      {r.name} {r.verified && <span className="font-mono text-[11px] text-[#B2904E]">✓ Verified</span>}
+                      <span className="w-7 h-7 rounded-full bg-secondary flex items-center justify-center text-xs font-medium">{r.name[0]}</span>
+                      {r.name} {r.verified && <span className="text-xs text-orchid">✓ Verified</span>}
                     </div>
                   </div>
                 </BlurFade>
@@ -236,7 +235,7 @@ export function ProductClient({ id }: { id: number }) {
 
         {/* Related */}
         <section className="pb-16">
-          <h2 className="font-serif text-[clamp(26px,3vw,40px)] mb-9">You May Also Like</h2>
+          <h2 className="h-section mb-9">You may also like</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
             {related.map((rp, i) => (
               <ProductCard key={rp.id} product={rp} index={i}
@@ -254,21 +253,20 @@ export function ProductClient({ id }: { id: number }) {
       </div>
 
       {/* Sticky bar */}
-      <div className={cn("fixed bottom-0 left-0 right-0 z-40 bg-luxe-bg/90 backdrop-blur-md border-t border-luxe-line transition-all duration-400",
+      <div className={cn("fixed bottom-0 left-0 right-0 z-40 bg-background/90 backdrop-blur-md border-t border-border transition-all duration-400",
         showSticky ? "translate-y-0 opacity-100" : "translate-y-full opacity-0")}>
         <div className="max-w-[1280px] mx-auto px-6 md:px-10 flex items-center gap-5 py-3">
-          <div className="hidden md:block w-12 h-[52px] shrink-0">
+          <div className="hidden md:block w-12 h-[52px] shrink-0 rounded-lg overflow-hidden">
             <Photo src={product.img} alt={product.name} eager className="w-full h-full" />
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-sm font-medium truncate">{product.name}</div>
-            <div className="font-mono text-[12px] text-luxe-muted hidden md:block">{color}{size ? ` · ${size}` : ""}</div>
+            <div className="font-display text-sm font-medium truncate">{product.name}</div>
+            <div className="text-xs text-muted-foreground hidden md:block">{color}{size ? `, size ${size}` : ""}</div>
           </div>
-          <span className="font-mono text-[17px]">{money(sale ? product.salePrice! : product.price)}</span>
-          <ShimmerButton background="#C9A96E" shimmerColor="rgba(255,255,255,0.5)" onClick={addItem}
-            className="h-11 px-6 font-mono text-xs tracking-widest text-luxe-ink shrink-0">
-            ADD TO CART
-          </ShimmerButton>
+          <span className="text-[17px] tabular-nums font-medium">{money(sale ? product.salePrice! : product.price)}</span>
+          <button type="button" onClick={addItem} className="btn-silk btn-sm shrink-0">
+            Add to bag
+          </button>
         </div>
       </div>
 

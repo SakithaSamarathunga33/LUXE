@@ -24,35 +24,38 @@ export function MobileBottomNav({ onCartOpen }: MobileBottomNavProps) {
     { key: "menu",    icon: Menu,        label: "Menu",     href: "/shop" },
   ]
 
+  // h-14 + bottom-2 = 64px, matching the body's pb-16.
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-[88] bg-luxe-bg/90 backdrop-blur-md border-t border-luxe-line flex justify-around items-center h-16 pb-[env(safe-area-inset-bottom)]">
+    <nav className="md:hidden fixed inset-x-3 bottom-[calc(0.5rem+env(safe-area-inset-bottom))] z-[88] h-14 rounded-full bg-card/80 backdrop-blur-xl border border-border shadow-lg shadow-black/40 flex justify-around items-center px-2">
       {items.map((item) => {
         const active = item.href === pathname
         const Icon = item.icon
+        const itemClass = cn(
+          "flex-1 h-full flex flex-col items-center justify-center rounded-full transition-colors",
+          active ? "text-foreground" : "text-muted-foreground hover:text-foreground",
+        )
         const inner = (
-          <span className="relative flex flex-col items-center gap-[3px]">
+          <span className="relative flex flex-col items-center gap-0.5">
             <span className="relative">
-              <Icon size={21} />
+              <Icon size={20} />
               {(item.count ?? 0) > 0 && (
-                <span className="absolute -top-1 -right-1.5 w-3.5 h-3.5 bg-luxe-gold text-luxe-ink font-mono text-[8px] rounded-full flex items-center justify-center">
+                <span className="absolute -top-1.5 -right-2 min-w-4 h-4 px-1 rounded-full bg-sale text-background text-[9px] font-semibold tabular-nums flex items-center justify-center">
                   {item.count}
                 </span>
               )}
             </span>
-            <span className="font-mono text-[8.5px] tracking-[.1em] uppercase">{item.label}</span>
+            <span className="text-[10px] font-medium">{item.label}</span>
           </span>
         )
         if (item.cart) {
           return (
-            <button key={item.key} onClick={onCartOpen}
-              className={cn("flex flex-col items-center", active ? "text-luxe-ink" : "text-luxe-muted")}>
+            <button key={item.key} onClick={onCartOpen} className={itemClass}>
               {inner}
             </button>
           )
         }
         return (
-          <Link key={item.key} href={item.href!}
-            className={cn("flex flex-col items-center", active ? "text-luxe-ink" : "text-luxe-muted")}>
+          <Link key={item.key} href={item.href!} className={itemClass}>
             {inner}
           </Link>
         )

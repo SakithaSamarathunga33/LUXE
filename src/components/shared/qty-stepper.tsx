@@ -13,18 +13,18 @@ interface QtyStepperProps {
 
 export function QtyStepper({ value, onChange, min = 1, max = 99, className }: QtyStepperProps) {
   return (
-    <div className={cn("inline-flex items-center border border-luxe-line h-[46px]", className)}>
+    <div className={cn("inline-flex items-center rounded-full border border-border bg-card p-1 h-[46px]", className)}>
       <button
         onClick={() => onChange(Math.max(min, value - 1))}
-        className="w-11 h-full flex items-center justify-center hover:bg-luxe-paper transition-colors"
+        className="aspect-square h-full flex items-center justify-center rounded-full hover:bg-secondary transition-colors"
         aria-label="decrease"
       >
         <Minus size={15} />
       </button>
-      <span className="w-10 text-center font-mono text-sm">{value}</span>
+      <span className="w-9 text-center tabular-nums font-medium text-sm">{value}</span>
       <button
         onClick={() => onChange(Math.min(max, value + 1))}
-        className="w-11 h-full flex items-center justify-center hover:bg-luxe-paper transition-colors"
+        className="aspect-square h-full flex items-center justify-center rounded-full hover:bg-secondary transition-colors"
         aria-label="increase"
       >
         <Plus size={15} />

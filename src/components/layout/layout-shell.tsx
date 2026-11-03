@@ -17,7 +17,7 @@ export function LayoutShell({ children }: { children: React.ReactNode }) {
       </main>
       <MobileBottomNav onCartOpen={() => setCartOpen(true)} />
       <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
-      <Toaster position="top-right" richColors />
+      <Toaster position="top-right" theme="dark" />
     </SmoothScroll>
   )
 }

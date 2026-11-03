@@ -26,13 +26,15 @@ const CATEGORIES = ["Women", "Men", "Accessories"] as const
 function FilterGroup({ title, open: initOpen = true, children }: { title: string; open?: boolean; children: React.ReactNode }) {
   const [open, setOpen] = useState(initOpen)
   return (
-    <div className="border-b border-luxe-line pb-0">
+    <div className="border-b border-border">
       <button
+        type="button"
         onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
         className="flex w-full justify-between items-center py-5 text-left"
       >
-        <span className="eyebrow">{title}</span>
-        <ChevronDown size={16} className={cn("text-luxe-muted transition-transform duration-300", open && "rotate-180")} />
+        <span className="text-sm font-medium">{title}</span>
+        <ChevronDown size={16} className={cn("text-muted-foreground transition-transform duration-300", open && "rotate-180")} />
       </button>
       {open && <div className="pb-5">{children}</div>}
     </div>
@@ -98,20 +100,18 @@ function ShopContent() {
       <FilterGroup title="Category">
         <div className="space-y-1">
           {["all", ...CATEGORIES].map((c) => (
-            <button key={c} onClick={() => setCategory(c)}
-              className={cn("block w-full text-left py-1.5 px-1 text-sm transition-colors hover:text-luxe-ink",
-                category === c ? "text-luxe-ink font-medium" : "text-luxe-muted")}>
+            <button key={c} type="button" onClick={() => setCategory(c)}
+              className={cn("block w-full text-left py-1.5 px-3 rounded-full text-sm transition-colors hover:text-foreground",
+                category === c ? "bg-secondary text-foreground font-medium" : "text-muted-foreground")}>
               {c === "all" ? "All" : c}
             </button>
           ))}
-          <label className="flex items-center gap-2.5 py-2 text-sm cursor-pointer text-luxe-muted hover:text-luxe-ink">
-            <Checkbox checked={onlyNew} onCheckedChange={(v) => setOnlyNew(!!v)}
-              className="border-luxe-line data-[state=checked]:bg-luxe-ink data-[state=checked]:border-luxe-ink" />
+          <label className="flex items-center gap-2.5 py-2 px-3 text-sm cursor-pointer text-muted-foreground hover:text-foreground">
+            <Checkbox checked={onlyNew} onCheckedChange={(v) => setOnlyNew(!!v)} />
             New arrivals only
           </label>
-          <label className="flex items-center gap-2.5 py-1 text-sm cursor-pointer text-luxe-muted hover:text-luxe-ink">
-            <Checkbox checked={onlySale} onCheckedChange={(v) => setOnlySale(!!v)}
-              className="border-luxe-line data-[state=checked]:bg-luxe-ink data-[state=checked]:border-luxe-ink" />
+          <label className="flex items-center gap-2.5 py-1 px-3 text-sm cursor-pointer text-muted-foreground hover:text-foreground">
+            <Checkbox checked={onlySale} onCheckedChange={(v) => setOnlySale(!!v)} />
             On sale
           </label>
         </div>
@@ -120,9 +120,9 @@ function ShopContent() {
       <FilterGroup title="Size">
         <div className="flex flex-wrap gap-2">
           {SIZES.map((s) => (
-            <button key={s} onClick={() => setSizes(toggle(sizes, s))}
-              className={cn("min-w-[44px] h-10 px-2 border font-mono text-[12px] transition-colors",
-                sizes.includes(s) ? "bg-luxe-ink text-white border-luxe-ink" : "border-luxe-line hover:border-luxe-ink")}>
+            <button key={s} type="button" onClick={() => setSizes(toggle(sizes, s))} aria-pressed={sizes.includes(s)}
+              className={cn("min-w-[44px] h-10 px-3 rounded-full border text-sm transition-colors",
+                sizes.includes(s) ? "bg-primary text-primary-foreground border-primary" : "border-border hover:border-foreground/40")}>
               {s}
             </button>
           ))}
@@ -132,9 +132,9 @@ function ShopContent() {
       <FilterGroup title="Color">
         <div className="flex flex-wrap gap-2.5 pt-1">
           {ALL_COLORS.map((c) => (
-            <button key={c} title={c} onClick={() => setColors(toggle(colors, c))}
-              className={cn("w-7 h-7 rounded-full ring-offset-1 transition-all",
-                colors.includes(c) ? "ring-2 ring-luxe-ink" : "ring-1 ring-luxe-line")}
+            <button key={c} type="button" title={c} aria-label={c} aria-pressed={colors.includes(c)} onClick={() => setColors(toggle(colors, c))}
+              className={cn("w-7 h-7 rounded-full ring-offset-2 ring-offset-background transition-all",
+                colors.includes(c) ? "ring-2 ring-orchid" : "ring-1 ring-border")}
               style={{ background: COLORS[c] }} />
           ))}
         </div>
@@ -143,28 +143,26 @@ function ShopContent() {
       <FilterGroup title="Price">
         <div className="pt-3">
           <Slider min={40} max={400} step={5} value={[maxPrice]}
-            onValueChange={(v) => { const arr = Array.isArray(v) ? v : [v]; setMaxPrice(arr[0] as number) }}
-            className="[&_[role=slider]]:bg-luxe-ink [&_[role=slider]]:border-luxe-ink [&_.bg-primary]:bg-luxe-ink" />
-          <div className="flex justify-between mt-3 font-mono text-[12px] text-luxe-muted">
-            <span>$40</span><span className="text-luxe-ink">Up to ${maxPrice}</span>
+            onValueChange={(v) => { const arr = Array.isArray(v) ? v : [v]; setMaxPrice(arr[0] as number) }} />
+          <div className="flex justify-between mt-3 text-sm tabular-nums text-muted-foreground">
+            <span>$40</span><span className="text-foreground font-medium">Up to ${maxPrice}</span>
           </div>
         </div>
       </FilterGroup>
 
       <FilterGroup title="Brand">
         {BRANDS.map((b) => (
-          <label key={b} className="flex items-center gap-2.5 py-1.5 text-sm cursor-pointer text-luxe-muted hover:text-luxe-ink">
-            <Checkbox checked={brands.includes(b)} onCheckedChange={() => setBrands(toggle(brands, b))}
-              className="border-luxe-line data-[state=checked]:bg-luxe-ink data-[state=checked]:border-luxe-ink" />
+          <label key={b} className="flex items-center gap-2.5 py-1.5 text-sm cursor-pointer text-muted-foreground hover:text-foreground">
+            <Checkbox checked={brands.includes(b)} onCheckedChange={() => setBrands(toggle(brands, b))} />
             {b}
           </label>
         ))}
       </FilterGroup>
 
       <div className="pt-4">
-        <button onClick={clearAll}
-          className="font-mono text-[11px] tracking-widest uppercase text-luxe-muted hover:text-luxe-ink transition-colors border-b border-luxe-muted hover:border-luxe-ink pb-px">
-          Clear All Filters
+        <button type="button" onClick={clearAll}
+          className="link-u text-sm text-muted-foreground hover:text-foreground">
+          Clear all filters
         </button>
       </div>
     </div>
@@ -174,8 +172,7 @@ function ShopContent() {
     <div className="min-h-screen">
       {/* Page header */}
       <div className="max-w-[1280px] mx-auto px-6 md:px-10 pt-8 pb-2">
-        <div className="eyebrow mb-3">Shop / {title}</div>
-        <h1 className="font-serif text-[clamp(34px,5vw,64px)]">{title}</h1>
+        <h1 className="h-section">{title}</h1>
       </div>
 
       <div className="max-w-[1280px] mx-auto px-6 md:px-10 pb-20">
@@ -186,22 +183,23 @@ function ShopContent() {
           {/* Main content */}
           <div>
             {/* Topbar */}
-            <div className="flex justify-between items-center border-b border-luxe-line pb-4 mb-8 flex-wrap gap-3">
-              <span className="font-mono text-[12px] text-luxe-muted">
+            <div className="flex justify-between items-center border-b border-border pb-4 mb-8 flex-wrap gap-3">
+              <span className="text-sm tabular-nums text-muted-foreground">
                 {filtered.length} {filtered.length === 1 ? "item" : "items"}
               </span>
               <div className="flex items-center gap-3">
                 <button
-                  className="md:hidden flex items-center gap-2 px-4 h-10 border border-luxe-line font-mono text-[12px] hover:bg-luxe-paper transition-colors"
+                  type="button"
+                  className="md:hidden btn-glass btn-sm"
                   onClick={() => setFiltersOpen(true)}
                 >
                   <SlidersHorizontal size={15} /> Filters
                 </button>
                 <Select value={sort} onValueChange={(v) => v && setSort(v)}>
-                  <SelectTrigger className="w-[190px] h-10 border-luxe-line font-mono text-[12px] focus:ring-luxe-gold">
+                  <SelectTrigger className="w-[190px] h-10 rounded-full text-sm">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="font-mono text-[12px]">
+                  <SelectContent>
                     {SORT_OPTIONS.map((o) => (
                       <SelectItem key={o} value={o}>{o}</SelectItem>
                     ))}
@@ -213,8 +211,8 @@ function ShopContent() {
             {/* Grid */}
             {filtered.length === 0 ? (
               <BlurFade inView>
-                <div className="py-20 text-center text-luxe-muted">
-                  <div className="font-serif text-2xl text-luxe-ink mb-2">Nothing matches yet</div>
+                <div className="py-20 text-center text-muted-foreground">
+                  <div className="font-display text-2xl font-semibold text-foreground mb-2">Nothing matches yet</div>
                   <p>Try widening your filters.</p>
                 </div>
               </BlurFade>
@@ -243,19 +241,20 @@ function ShopContent() {
 
       {/* Mobile filter drawer */}
       <Sheet open={filtersOpen} onOpenChange={(o) => !o && setFiltersOpen(false)}>
-        <SheetContent side="left" className="w-[330px] bg-luxe-bg border-r border-luxe-line flex flex-col p-0">
+        <SheetContent side="left" className="w-[330px] bg-background border-r border-border flex flex-col p-0">
           <div className="flex justify-between items-center p-6">
-            <span className="font-serif text-2xl">Filters</span>
-            <button onClick={() => setFiltersOpen(false)}><X size={20} /></button>
+            <span className="font-display text-2xl font-semibold">Filters</span>
+            <button type="button" className="icon-btn" aria-label="Close filters" onClick={() => setFiltersOpen(false)}><X size={20} /></button>
           </div>
-          <hr className="border-luxe-line" />
+          <hr className="border-border" />
           <div className="flex-1 overflow-y-auto px-6 py-2">{SidebarContent}</div>
-          <div className="p-5 border-t border-luxe-line">
+          <div className="p-5 border-t border-border">
             <button
+              type="button"
               onClick={() => setFiltersOpen(false)}
-              className="w-full h-12 bg-luxe-ink text-white font-mono text-xs tracking-widest hover:bg-luxe-gold hover:text-luxe-ink transition-colors"
+              className="btn-chalk btn-block"
             >
-              SHOW {filtered.length} ITEMS
+              Show {filtered.length} items
             </button>
           </div>
         </SheetContent>
@@ -270,7 +269,7 @@ function ShopContent() {
 
 export default function ShopPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><span className="font-mono text-sm text-luxe-muted">Loading...</span></div>}>
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><span className="text-sm text-muted-foreground">Loading...</span></div>}>
       <ShopContent />
     </Suspense>
   )

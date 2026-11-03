@@ -40,10 +40,10 @@ export function Photo({ src, alt = "", className, eager = false, dark = false }:
   return (
     <div
       ref={wrapRef}
-      className={cn("relative overflow-hidden w-full h-full", dark ? "bg-[#17120d]" : "bg-[#ece6dc]", className)}
+      className={cn("relative overflow-hidden w-full h-full", dark ? "bg-background" : "bg-card", className)}
     >
       {status !== "ok" && (
-        <div className={cn("skeleton absolute inset-0", dark && "bg-[#221b14]")} />
+        <div className={cn("skeleton absolute inset-0", dark && "bg-secondary")} />
       )}
       {show && (
         <img
@@ -58,7 +58,7 @@ export function Photo({ src, alt = "", className, eager = false, dark = false }:
         />
       )}
       {status === "err" && (
-        <div className="absolute inset-0 flex items-center justify-center text-luxe-muted/40 text-4xl font-serif">
+        <div className="absolute inset-0 flex items-center justify-center text-muted-foreground/40 text-4xl font-display font-semibold">
           L
         </div>
       )}

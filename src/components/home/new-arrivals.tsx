@@ -26,18 +26,18 @@ export function NewArrivals({ onOpen, onQuick }: NewArrivalsProps) {
   }
 
   return (
-    <section className="py-20 bg-luxe-paper">
-      <div className="max-w-[1280px] mx-auto px-6 md:px-10">
+    <section className="py-24">
+      <div className="max-w-[1280px] mx-auto px-5 md:px-10">
         <div className="flex items-end justify-between mb-10 gap-5">
-          <div>
-            <BlurFade delay={0}><div className="eyebrow mb-3.5">Just Landed</div></BlurFade>
-            <BlurFade delay={0.1}><h2 className="font-serif text-[clamp(32px,4vw,52px)]">New Arrivals</h2></BlurFade>
-          </div>
-          <div className="hidden md:flex gap-2.5">
-            <button onClick={() => scroll(-1)} className="w-10 h-10 border border-luxe-line flex items-center justify-center hover:bg-luxe-ink hover:text-white transition-colors">
+          <BlurFade delay={0}>
+            <h2 className="h-section">New arrivals</h2>
+            <p className="text-muted-foreground mt-3">Landed this week, in limited runs.</p>
+          </BlurFade>
+          <div className="hidden md:flex gap-2">
+            <button onClick={() => scroll(-1)} className="icon-btn size-11 border border-border" aria-label="Scroll back">
               <ChevronLeft size={18} />
             </button>
-            <button onClick={() => scroll(1)} className="w-10 h-10 border border-luxe-line flex items-center justify-center hover:bg-luxe-ink hover:text-white transition-colors">
+            <button onClick={() => scroll(1)} className="icon-btn size-11 border border-border" aria-label="Scroll forward">
               <ChevronRight size={18} />
             </button>
           </div>
@@ -45,11 +45,11 @@ export function NewArrivals({ onOpen, onQuick }: NewArrivalsProps) {
       </div>
       <div
         ref={railRef}
-        className="flex gap-5 overflow-x-auto no-scrollbar px-6 md:px-10 pb-2"
+        className="flex gap-5 overflow-x-auto no-scrollbar px-5 md:px-10 pb-2 scroll-px-5 md:scroll-px-10"
         style={{ scrollSnapType: "x mandatory" }}
       >
         {items.map((p, i) => (
-          <div key={p.id} className="flex-none w-[300px] md:w-[320px]" style={{ scrollSnapAlign: "start" }}>
+          <div key={p.id} className="flex-none w-[280px] md:w-[320px]" style={{ scrollSnapAlign: "start" }}>
             <ProductCard
               product={p}
               index={i}
@@ -64,14 +64,12 @@ export function NewArrivals({ onOpen, onQuick }: NewArrivalsProps) {
             />
           </div>
         ))}
-        <div className="flex-none w-10" />
+        <div className="flex-none w-5" />
       </div>
-      <div className="text-center mt-8">
-        <BlurFade delay={0.2} inView>
-          <Link href="/shop?filter=new" className="font-mono text-[11px] tracking-[.16em] uppercase border-b border-luxe-ink pb-px hover:text-luxe-gold hover:border-luxe-gold transition-colors">
-            View All New Arrivals
-          </Link>
-        </BlurFade>
+      <div className="text-center mt-10">
+        <Link href="/shop?filter=new" className="btn-glass">
+          See all new arrivals
+        </Link>
       </div>
     </section>
   )

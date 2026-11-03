@@ -1,39 +1,26 @@
-import { Cormorant_Garamond, Inter, JetBrains_Mono } from "next/font/google"
+import { Bricolage_Grotesque, Geist } from "next/font/google"
 import { Providers } from "@/components/providers"
 import { LayoutShell } from "@/components/layout/layout-shell"
 import "./globals.css"
 
-const cormorant = Cormorant_Garamond({
+const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  style: ["normal", "italic"],
-  variable: "--font-cormorant",
+  axes: ["opsz", "wdth"],
+  variable: "--font-bricolage",
   display: "swap",
 })
 
-const inter = Inter({
+const geist = Geist({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
-  variable: "--font-inter",
-  display: "swap",
-})
-
-const jetbrains = JetBrains_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500"],
-  variable: "--font-jetbrains",
+  variable: "--font-geist",
   display: "swap",
 })
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html
-      lang="en"
-      className={`${cormorant.variable} ${inter.variable} ${jetbrains.variable}`}
-      style={{ fontFamily: "var(--font-inter), system-ui, sans-serif" }}
-    >
+    <html lang="en" className={`dark ${bricolage.variable} ${geist.variable}`}>
       <body
-        className="min-h-screen flex flex-col bg-luxe-bg text-luxe-ink antialiased pb-16 md:pb-0"
+        className="min-h-screen flex flex-col bg-background text-foreground antialiased pb-16 md:pb-0"
         suppressHydrationWarning
       >
         <Providers>

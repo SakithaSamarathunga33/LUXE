@@ -2,12 +2,12 @@
 
 import { useState, useRef } from "react"
 import { motion, AnimatePresence, useInView } from "framer-motion"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { BlurFade } from "@/components/magicui/blur-fade"
 import { ProductCard } from "@/components/shared/product-card"
 import { useCart } from "@/hooks/use-cart"
 import { useWishlist } from "@/hooks/use-wishlist"
 import { PRODUCTS, type Product } from "@/data/products"
+import { cn } from "@/lib/utils"
 import { toast } from "sonner"
 
 interface BestsellersProps {
@@ -18,11 +18,11 @@ interface BestsellersProps {
 const TABS = ["All", "Tops", "Bottoms", "Outerwear"] as const
 
 const cardAnim = {
-  hidden: { opacity: 0, y: 32 },
+  hidden: { opacity: 0, y: 28 },
   show: (i: number) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5, delay: i * 0.07, ease: [0.25, 0.1, 0.25, 1] as const },
+    transition: { duration: 0.5, delay: i * 0.06, ease: [0.22, 1, 0.36, 1] as const },
   }),
 }
 
@@ -38,35 +38,46 @@ export function Bestsellers({ onOpen, onQuick }: BestsellersProps) {
   ).slice(0, 8)
 
   return (
-    <section ref={sectionRef} className="py-20 max-w-[1280px] mx-auto px-6 md:px-10">
-      <div className="text-center mb-4">
-        <BlurFade delay={0}><div className="eyebrow mb-3.5">Most Wanted</div></BlurFade>
-        <BlurFade delay={0.1}><h2 className="font-serif text-[clamp(32px,4vw,52px)]">Bestsellers</h2></BlurFade>
-      </div>
+    <section ref={sectionRef} className="py-24 max-w-[1280px] mx-auto px-5 md:px-10">
+      <div className="flex items-end justify-between flex-wrap gap-6 mb-10">
+        <BlurFade delay={0}>
+          <h2 className="h-section">Bestsellers</h2>
+          <p className="text-muted-foreground mt-3">What everyone is wearing this month.</p>
+        </BlurFade>
 
-      <BlurFade delay={0.15} inView>
-        <div className="flex justify-center my-8">
-          <Tabs value={tab} onValueChange={setTab}>
-            <TabsList className="bg-transparent border-b border-luxe-line rounded-none h-auto p-0 gap-8">
-              {TABS.map((t) => (
-                <TabsTrigger
-                  key={t}
-                  value={t}
-                  className="rounded-none font-mono text-[11px] tracking-[.14em] uppercase pb-3 px-0 border-b-2 border-transparent data-[state=active]:border-luxe-ink data-[state=active]:bg-transparent data-[state=active]:shadow-none text-luxe-muted data-[state=active]:text-luxe-ink transition-all"
-                >
-                  {t}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </Tabs>
-        </div>
-      </BlurFade>
+        {/* Segmented control — the thumb slides between options */}
+        <BlurFade delay={0.1} inView>
+          <div role="tablist" aria-label="Filter bestsellers" className="inline-flex p-1 rounded-full bg-card border border-border">
+            {TABS.map((t) => (
+              <button
+                key={t}
+                role="tab"
+                aria-selected={tab === t}
+                onClick={() => setTab(t)}
+                className={cn(
+                  "relative h-9 px-4 md:px-5 rounded-full text-sm font-medium transition-colors",
+                  tab === t ? "text-background" : "text-muted-foreground hover:text-foreground",
+                )}
+              >
+                {tab === t && (
+                  <motion.span
+                    layoutId="bestseller-thumb"
+                    className="absolute inset-0 rounded-full bg-foreground"
+                    transition={{ type: "spring", stiffness: 420, damping: 34 }}
+                  />
+                )}
+                <span className="relative">{t}</span>
+              </button>
+            ))}
+          </div>
+        </BlurFade>
+      </div>
 
       {/* key={tab} forces a remount on every tab switch so cards stagger in fresh */}
       <AnimatePresence mode="wait">
         <motion.div
           key={tab}
-          className="grid grid-cols-2 md:grid-cols-4 gap-5 md:gap-6"
+          className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8 md:gap-x-6 md:gap-y-10"
           initial="hidden"
           animate={inView ? "show" : "hidden"}
           exit={{ opacity: 0, transition: { duration: 0.1 } }}
